@@ -27,4 +27,4 @@ RUN docker-php-ext-enable imagick
 RUN pecl install xdebug && \
   docker-php-ext-enable xdebug
 
-RUN rm -rf /var/www/html
+COPY ./php/xc5.3/php.ini /usr/local/etc/php/php.ini
