@@ -27,4 +27,11 @@ RUN docker-php-ext-enable imagick
 RUN pecl install xdebug && \
   docker-php-ext-enable xdebug
 
+RUN apt-get update && apt-get install -y wget \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
+ && chmod +x mhsendmail_linux_amd64 \
+ && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
+
 COPY ./php/xc5.4/php.ini /usr/local/etc/php/php.ini
