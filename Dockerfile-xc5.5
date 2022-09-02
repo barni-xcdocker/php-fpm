@@ -1,0 +1,45 @@
+FROM php:8.0-fpm
+
+LABEL maintainer="Pavel Gavrilenko <paulgavrilenko@gmail.com>"
+
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -y --no-install-recommends \
+    curl \
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
+    libfreetype6-dev \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN docker-php-ext-install pdo_mysql \
+  && docker-php-ext-install mysqli
+
+
+  # Install the PHP gd library
+RUN set -eux; \
+  docker-php-ext-configure gd \
+    --prefix=/usr \
+    --with-jpeg \
+    --with-webp \
+    --with-freetype; \
+  docker-php-ext-install gd; \
+  php -r 'var_dump(gd_info());'
+    
+RUN apt-get update && apt-get install -y libmagickwand-dev --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN printf "\n" | pecl install imagick
+RUN docker-php-ext-enable imagick
+
+RUN pecl install xdebug && \
+  docker-php-ext-enable xdebug
+
+RUN apt-get update && apt-get install -y wget \
+  && rm -rf /var/lib/apt/lists/*
+  
+RUN wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
+ && chmod +x mhsendmail_linux_amd64 \
+ && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
+
+COPY ./php/xc5.5/php.ini /usr/local/etc/php/php.ini
