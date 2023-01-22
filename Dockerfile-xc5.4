@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 LABEL maintainer="Pavel Gavrilenko <paulgavrilenko@gmail.com>"
 
@@ -16,10 +16,11 @@ RUN docker-php-ext-install pdo_mysql \
   && docker-php-ext-install mysqli
 
 RUN docker-php-ext-configure gd \
-  --with-freetype-dir=/usr/include/freetype2 \
-  --with-jpeg-dir=/usr/include \
-  --with-webp-dir=/usr/lib \
-  && docker-php-ext-install gd
+            --prefix=/usr \
+            --with-jpeg \
+            --with-webp \
+            --with-freetype; \
+    docker-php-ext-install gd; 
     
 RUN apt-get update && apt-get install -y libmagickwand-dev --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
